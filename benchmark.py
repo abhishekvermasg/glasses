@@ -22,33 +22,33 @@ from sotabencheval.image_classification import ImageNetEvaluator
 
 
 models = {
-     'vgg11':   VGG.vgg11,
-    'vgg13': VGG.vgg13,
-    'vgg16': VGG.vgg16,
-    'vgg19': VGG.vgg19,
-    'vgg11_bn':   VGG.vgg11_bn,
-    'vgg13_bn': VGG.vgg13_bn,
-    'vgg16_bn': VGG.vgg16_bn,
-    'vgg19_bn': VGG.vgg19_bn,
-    'resnet18':  ResNet.resnet18,
-    'resnet26':  ResNet.resnet26,
-    'resnet34':ResNet.resnet34,
-    'resnet50': ResNet.resnet50,
+    #  'vgg11':   VGG.vgg11,
+    # 'vgg13': VGG.vgg13,
+    # 'vgg16': VGG.vgg16,
+    # 'vgg19': VGG.vgg19,
+    # 'vgg11_bn':   VGG.vgg11_bn,
+    # 'vgg13_bn': VGG.vgg13_bn,
+    # 'vgg16_bn': VGG.vgg16_bn,
+    # 'vgg19_bn': VGG.vgg19_bn,
+    # 'resnet18':  ResNet.resnet18,
+    # 'resnet26':  ResNet.resnet26,
+    # 'resnet34':ResNet.resnet34,
+    # 'resnet50': ResNet.resnet50,
     'cse_resnet50': SEResNet.cse_resnet50,
-    'resnet101': ResNet.resnet101,
-    'resnet152': ResNet.resnet152,
+    # 'resnet101': ResNet.resnet101,
+    # 'resnet152': ResNet.resnet152,
 
 
-    'resnext50_32x4d': ResNetXt.resnext50_32x4d,
-    'resnext101_32x8d':ResNetXt.resnext101_32x8d,
-    'wide_resnet50_2': WideResNet.wide_resnet50_2,
-    'wide_resnet101_2': WideResNet.wide_resnet101_2,
+    # 'resnext50_32x4d': ResNetXt.resnext50_32x4d,
+    # 'resnext101_32x8d':ResNetXt.resnext101_32x8d,
+    # 'wide_resnet50_2': WideResNet.wide_resnet50_2,
+    # 'wide_resnet101_2': WideResNet.wide_resnet101_2,
 
-    'densenet121': DenseNet.densenet121,
-    'densenet169': DenseNet.densenet169,
-    'densenet201': DenseNet.densenet201,
-    'densenet161': DenseNet.densenet161,
-    'mobilenet_v2': MobileNetV2,
+    # 'densenet121': DenseNet.densenet121,
+    # 'densenet169': DenseNet.densenet169,
+    # 'densenet201': DenseNet.densenet201,
+    # 'densenet161': DenseNet.densenet161,
+    # 'mobilenet_v2': MobileNetV2,
 
     'efficientnet_b0': EfficientNet.efficientnet_b0,
     'efficientnet_b1': EfficientNet.efficientnet_b1,
@@ -124,6 +124,8 @@ def benchmark_all() -> pd.DataFrame:
     bar = tqdm(models.items())
 
     for key, model_def in bar:
+        if df is not None and key is in df.index:
+            continue
         if key not in df.index:
             model = model_def()
             try:

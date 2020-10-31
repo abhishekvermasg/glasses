@@ -26,7 +26,7 @@ IMAGENET_DEFAULT_STD = torch.Tensor([0.229, 0.224, 0.225])
 
 @dataclass
 class Config:
-    """Describe one configuration for a pretrained model.
+    """Describe one configuration for a pretrained model. Default to ImageNet
 
     Returns:
         [type]: [description]
@@ -69,10 +69,15 @@ def pretrained(name: str = None) -> Callable:
         name = func.__name__ if _name is None else _name
         provider = PretrainedWeightsProvider()
         @wraps(func)
-        def wrapper(*args,  pretrained: bool = False, **kwargs) -> Callable:
+        def wrapper(*args,  pretrained: bool = False, dataset: str = None, version: str = None, **kwargs) -> Callable:
+            full_name = name 
+            if dataset:
+                full_name += f'_{dataset}'
+            if version:
+                full_name += f'_{version}'
             model = func(*args, **kwargs)
             if pretrained:
-                model.load_state_dict(provider[name])
+                model.load_state_dict(provider[full_name])
                 model.eval()
             return model
         return wrapper
@@ -185,13 +190,13 @@ class PretrainedWeightsProvider:
             self.save_dir.mkdir(exist_ok=True)
 
     def __getitem__(self, key: str) -> dict:
-        if key not in self.weights_zoo:
-            raise KeyError(
-                f'No weights for model "{key}". Available models are {",".join(list(self.weights_zoo.keys()))}')
-
         save_path = self.save_dir / f'{key}.pth'
 
         should_download = not save_path.exists()
+
+        if should_download and key not in self.weights_zoo:
+            raise KeyError(
+                f'No weights for model "{key}". Available models are {",".join(list(self.weights_zoo.keys()))}')
 
         if should_download or self.override:
             handler = self.weights_zoo[key]

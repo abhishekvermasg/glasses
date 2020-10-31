@@ -182,7 +182,7 @@ class EfficientNet(VisionModule):
         'efficientnet_b1':  Config(resize=240, input_size=240, interpolation='bicubic'),
         'efficientnet_b2':  Config(resize=260, input_size=260, interpolation='bicubic'),
         'efficientnet_b3':  Config(resize=300, input_size=300, interpolation='bicubic'),
-        'efficientnet_b4':  Config(resize=380, input_size=380, interpolation='bicubic'),
+        'efficientnet_b4_tf':  Config(resize=380, input_size=380, interpolation='bicubic'),
         'efficientnet_b5':  Config(resize=456, input_size=456, interpolation='bicubic'),
         'efficientnet_b6':  Config(resize=528, input_size=528, interpolation='bicubic'),
         'efficientnet_b7':  Config(resize=600, input_size=600, interpolation='bicubic'),
@@ -267,20 +267,24 @@ class EfficientNet(VisionModule):
 
 
     @classmethod
+    @pretrained()
     def efficientnet_b4(cls, *args, **kwargs) -> EfficientNet:
         return cls.from_config(cls.models_config, 'efficientnet_b4',*args, **kwargs)
 
 
     @classmethod
+    @pretrained()
     def efficientnet_b5(cls, *args, **kwargs) -> EfficientNet:
         return cls.from_config(cls.models_config, 'efficientnet_b5',*args, **kwargs)
 
 
     @classmethod
+    @pretrained()
     def efficientnet_b6(cls, *args, **kwargs) -> EfficientNet:
         return cls.from_config(cls.models_config, 'efficientnet_b6',*args, **kwargs)
 
     @classmethod
+    @pretrained()
     def efficientnet_b7(cls, *args, **kwargs) -> EfficientNet:
         return cls.from_config(cls.models_config, 'efficientnet_b7',*args, **kwargs)
 

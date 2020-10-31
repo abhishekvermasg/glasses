@@ -22,47 +22,60 @@ from sotabencheval.image_classification import ImageNetEvaluator
 
 
 models = {
-     'vgg11':   VGG.vgg11,
-    'vgg13': VGG.vgg13,
-    'vgg16': VGG.vgg16,
-    'vgg19': VGG.vgg19,
-    'vgg11_bn':   VGG.vgg11_bn,
-    'vgg13_bn': VGG.vgg13_bn,
-    'vgg16_bn': VGG.vgg16_bn,
-    'vgg19_bn': VGG.vgg19_bn,
-    'resnet18':  ResNet.resnet18,
-    'resnet26':  ResNet.resnet26,
-    'resnet34':ResNet.resnet34,
-    'resnet50': ResNet.resnet50,
-    'cse_resnet50': SEResNet.cse_resnet50,
-    'resnet101': ResNet.resnet101,
-    'resnet152': ResNet.resnet152,
+    
+    # 'vgg11':   VGG.vgg11,
+    # 'vgg13': VGG.vgg13,
+    # 'vgg16': VGG.vgg16,
+    # 'vgg19': VGG.vgg19,
+    # 'vgg11_bn':   VGG.vgg11_bn,
+    # 'vgg13_bn': VGG.vgg13_bn,
+    # 'vgg16_bn': VGG.vgg16_bn,
+    # 'vgg19_bn': VGG.vgg19_bn,
+    # 'resnet18':  ResNet.resnet18,
+    # 'resnet26':  ResNet.resnet26,
+    # 'resnet34':ResNet.resnet34,
+    # 'resnet50': ResNet.resnet50,
+    # 'cse_resnet50': SEResNet.cse_resnet50,
+    # 'resnet101': ResNet.resnet101,
+    # 'resnet152': ResNet.resnet152,
 
 
-    'resnext50_32x4d': ResNetXt.resnext50_32x4d,
-    'resnext101_32x8d':ResNetXt.resnext101_32x8d,
-    'wide_resnet50_2': WideResNet.wide_resnet50_2,
-    'wide_resnet101_2': WideResNet.wide_resnet101_2,
+    # 'resnext50_32x4d': ResNetXt.resnext50_32x4d,
+    # 'resnext101_32x8d':ResNetXt.resnext101_32x8d,
+    # 'resnext50_32x4d': ResNetXt.resnext50_32x4d,
 
-    'densenet121': DenseNet.densenet121,
-    'densenet169': DenseNet.densenet169,
-    'densenet201': DenseNet.densenet201,
-    'densenet161': DenseNet.densenet161,
-    'mobilenet_v2': MobileNetV2,
+    # 'resnext101_32x8d_ig':  ResNetXt.resnext101_32x8d,
+    # 'resnext101_32x16d_ig' : ResNetXt.resnext101_32x16d,
+    # 'resnext101_32x32d_ig' : ResNetXt.resnext101_32x32d,
+    # 'resnext101_32x48d_ig' :  ResNetXt.resnext101_32x48d,    
 
-    'efficientnet_b0': EfficientNet.efficientnet_b0,
-    'efficientnet_b1': EfficientNet.efficientnet_b1,
-    'efficientnet_b2':EfficientNet.efficientnet_b2,
-    'efficientnet_b3': EfficientNet.efficientnet_b3,
+    # 'wide_resnet50_2': WideResNet.wide_resnet50_2,
+    # 'wide_resnet101_2': WideResNet.wide_resnet101_2,
+
+    # 'densenet121': DenseNet.densenet121,
+    # 'densenet169': DenseNet.densenet169,
+    # 'densenet201': DenseNet.densenet201,
+    # 'densenet161': DenseNet.densenet161,
+    # 'mobilenet_v2': MobileNetV2,
+
+    # 'efficientnet_b0': EfficientNet.efficientnet_b0,
+    # 'efficientnet_b1': EfficientNet.efficientnet_b1,
+    # 'efficientnet_b2':EfficientNet.efficientnet_b2,
+    # 'efficientnet_b3': EfficientNet.efficientnet_b3,
+
+    'efficientnet_b4_tf': EfficientNet.efficientnet_b4,
+
 
 }
 
 
 batch_sizes = {
-     'efficientnet-b0': 256,
+    'efficientnet-b0': 256,
     'efficientnet-b1': 128,
     'efficientnet-b2': 64,
-    'efficientnet-b3': 64
+    'efficientnet-b3': 64,
+    'resnext101_32x32d_ig': 32,
+    'resnext101_32x48d_ig': 32
 }
 
 
@@ -125,7 +138,7 @@ def benchmark_all() -> pd.DataFrame:
 
     for key, model_def in bar:
         if key not in df.index:
-            model = model_def()
+            model = model_def(padding='same')
             try:
                 cfg = model.configs[key]
             except KeyError:
@@ -158,7 +171,9 @@ def benchmark_all() -> pd.DataFrame:
                 'top1': glasses_top1,
                 'top5': glasses_top5,
                 'time': glasses_time
-            }
+            }   
+
+            print(data)
 
             records.append(data)
 
@@ -168,8 +183,8 @@ def benchmark_all() -> pd.DataFrame:
                 df = pd.concat([df, new_df])
             else: 
                 df = new_df
-            df.to_pickle(str(save_path))
-            pprint(records)
+            # df.to_pickle(str(save_path))
+            # pprint(records)
     # pd.DataFrame.
 
     print(df)

@@ -32,6 +32,15 @@ zoo_models_mapping = {
     'cse_resnet50': [partial(timm.create_model, 'seresnet50', pretrained=True), SEResNet.cse_resnet50],
     'resnext50_32x4d': [partial(resnext50_32x4d, pretrained=True), ResNetXt.resnext50_32x4d],
     'resnext101_32x8d': [partial(resnext101_32x8d, pretrained=True), ResNetXt.resnext101_32x8d],
+
+    #  ResNeXt models - Weakly Supervised Pretraining on Instagram Hashtags
+    #  from https://github.com/facebookresearch/WSL-Images
+    #  Please note the CC-BY-NC 4.0 license on theses weights, non-commercial use only.
+    'resnext101_32x8d_ig': [partial(timm.create_model, 'ig_resnext101_32x8d', pretrained=True), ResNetXt.resnext101_32x8d],
+    'resnext101_32x16d_ig' : [partial(timm.create_model, 'ig_resnext101_32x16d', pretrained=True),ResNetXt.resnext101_32x16d],
+    'resnext101_32x32d_ig' : [partial(timm.create_model, 'ig_resnext101_32x32d', pretrained=True), ResNetXt.resnext101_32x32d],
+    'resnext101_32x48d_ig' : [partial(timm.create_model, 'ig_resnext101_32x48d', pretrained=True), ResNetXt.resnext101_32x48d],
+
     'wide_resnet50_2': [partial(wide_resnet50_2, pretrained=True), WideResNet.wide_resnet50_2],
     'wide_resnet101_2': [partial(wide_resnet101_2, pretrained=True), WideResNet.wide_resnet101_2],
 
@@ -43,7 +52,7 @@ zoo_models_mapping = {
     'vgg13': [partial(vgg13, pretrained=True), VGG.vgg13],
     'vgg16': [partial(vgg16, pretrained=True), VGG.vgg16],
     'vgg19': [partial(vgg19, pretrained=True), VGG.vgg19],
-        'vgg11_bn':[pretrainedmodels.__dict__['vgg11_bn'], VGG.vgg11_bn],
+    'vgg11_bn':[pretrainedmodels.__dict__['vgg11_bn'], VGG.vgg11_bn],
     'vgg13_bn':[pretrainedmodels.__dict__['vgg13_bn'], VGG.vgg13_bn],
     'vgg16_bn':[pretrainedmodels.__dict__['vgg16_bn'], VGG.vgg16_bn],
     'vgg19_bn':[pretrainedmodels.__dict__['vgg19_bn'], VGG.vgg19_bn],
@@ -54,6 +63,13 @@ zoo_models_mapping = {
     'efficientnet_b1': [partial(timm.create_model, 'efficientnet_b1', pretrained=True), EfficientNet.efficientnet_b1],
     'efficientnet_b2': [partial(timm.create_model, 'efficientnet_b2', pretrained=True), EfficientNet.efficientnet_b2],
     'efficientnet_b3': [partial(timm.create_model, 'efficientnet_b3', pretrained=True), EfficientNet.efficientnet_b3],
+    # tf weights
+    'efficientnet_b4_tf': [partial(timm.create_model, 'tf_efficientnet_b4', pretrained=True), EfficientNet.efficientnet_b4],
+    'efficientnet_b5_tf': [partial(timm.create_model, 'tf_efficientnet_b5', pretrained=True), EfficientNet.efficientnet_b5],
+    'efficientnet_b6_tf': [partial(timm.create_model, 'tf_efficientnet_b6', pretrained=True), EfficientNet.efficientnet_b6],
+    'efficientnet_b7_tf': [partial(timm.create_model, 'tf_efficientnet_b7', pretrained=True), EfficientNet.efficientnet_b7],
+    'efficientnet_b8_tf': [partial(timm.create_model, 'tf_efficientnet_b8', pretrained=True), EfficientNet.efficientnet_b8],
+
 
 }
 
@@ -73,7 +89,7 @@ def clone_model(src: nn.Module, dst: nn.Module) -> nn.Module:
 
 @dataclass
 class LocalStorage:
-    root: Path = Path('~/models_weights/')
+    root: Path = Path(torch.hub.get_dir()) / Path('glasses')
     override: bool = False
 
     def __post_init__(self):
@@ -127,8 +143,9 @@ if __name__ == '__main__':
         save_dir = args.o
         save_dir.mkdir(exist_ok=True)
 
-    storage = LocalStorage(root=Path('/home/zuppif/Documents/models_weights/',
-                                     override=False)) if args.storage == 'local' else AWSSTorage()
+    storage = LocalStorage() if args.storage == 'local' else AWSSTorage()
+
+    print(storage.root)
 
     bar = tqdm(zoo_models_mapping.items())
     uploading_bar = tqdm()

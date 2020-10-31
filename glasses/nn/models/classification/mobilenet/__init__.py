@@ -43,7 +43,7 @@ class InvertedResidualBlock(nn.Module):
         stride (int, optional): [description]. Defaults to 1.
     """
 
-    def __init__(self, in_features: int, out_features: int,  stride: int = 1, expansion: int = 6, activation: nn.Module = nn.ReLU6, kernel_size: int = 3):
+    def __init__(self, in_features: int, out_features: int,  stride: int = 1, expansion: int = 6, activation: nn.Module = nn.ReLU6, kernel_size: int = 3,  **kwargs):
         super().__init__()
         self.in_features, self.out_features = in_features, out_features
         self.expansion = expansion
@@ -53,18 +53,18 @@ class InvertedResidualBlock(nn.Module):
         # we need to expand the input only if expansion is greater than one
         if expansion > 1:
             weights.add_module('exp', ConvBnAct(in_features,  self.expanded_features,
-                                                activation=activation, kernel_size=1))
+                                                activation=activation, kernel_size=1, **kwargs))
         # add the depth wise and point wise conv
         weights.add_module('depth', ConvBnAct(self.expanded_features, self.expanded_features,
                                               conv=DepthWiseConv2d,
                                               activation=activation,
                                               kernel_size=kernel_size,
-                                              stride=stride)
+                                              stride=stride, **kwargs)
                            )
 
         weights.add_module('point',  nn.Sequential(OrderedDict({
             'conv': Conv2dPad(self.expanded_features,
-                                                   out_features, kernel_size=1, bias=False),
+                                                   out_features, kernel_size=1, bias=False, **kwargs),
             'bn': nn.BatchNorm2d(out_features)
         })))
         # do not apply residual when downsamping and when features are different

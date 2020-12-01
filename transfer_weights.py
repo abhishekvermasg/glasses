@@ -98,8 +98,9 @@ class LocalStorage:
 
 class AWSSTorage:
 
-    def __init__(self):
+    def __init__(self, name: str):
         self.s3 = boto3.resource('s3')
+        self.name = name
 
     def __call__(self, key: str, model: nn.Module, bar: tqdm):
         buffer = BytesIO()
@@ -108,7 +109,7 @@ class AWSSTorage:
 
         bar.reset(total=buffer.getbuffer().nbytes)
         bar.set_description('📤')
-        obj = self.s3.Object('cv-glasses', f'{key}.pth')
+        obj = self.s3.Object(self.name, f'{key}.pth')
 
         obj.upload_fileobj(buffer, ExtraArgs={
                            'ACL': 'public-read'}, Callback=lambda x: bar.update(x))
